@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { User } = require("./model/userSchema");
 const bcryptjs = require("bcryptjs");
-const jsonwebtoken = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 
 
@@ -35,27 +35,42 @@ router.post("/register", async function (req, res, next) {
     });
 });
 
-// router.post("/register",async (req,res) => {
-//     // try{
-//     //     var emailExist = await User.findOne({email:req.body.email});
+router.post("/login",async (req,res) => {
+    console.log(req.body)
+    let user = await User.findOne({ email: req.body.email });
+    if(user){
+        bcryptjs.compare(req.body.password,user.password, function (err,result){
+            if(err) throw err;
+            if(result){
+                jwt.sign({ id:user._id },
+                    process.env.JWT_SECRET,
+                    { expiresIn: "1h" },
+                    function (err,token){
+                        if(err) throw err;
+                        res.status(200).json({
+                            message: "Correct",
+                            token : token
+                        })
+                })
+            }else{
+                res.status(400).json({
+                    message: "Password Wrong"
+                })
+            }
+        })  
+    }else{
+        res.status(401).json({
+            message: "User not found"
+        })
+    }
 
-//     //     if(emailExist)
-//     //     {
-//     //         return res.status(400).json("Email already exist");
-//     //     }
-//     //     //password Hash 
-//     //     var hash = await bcryptjs.hash(req.body.password,10);
+});
 
-//     //     const user = new User({
-//     //         name:req.body.name,
-//     //         eamil:req.body.email,
-//     //         password:hash  
-//     //     })
-//     //     var data = await user.save();
-//     //     res.json(data);
-//     // }catch(err){
-//     //    res.status(400).json(err)
-//     // }      
-// });
+router.get("/info",async (req,res) => {
+    req.json({
+        message: "User Info"
+    })
+});
+
 
 module.exports = router;
