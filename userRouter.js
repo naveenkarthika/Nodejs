@@ -6,8 +6,7 @@ const jsonwebtoken = require("jsonwebtoken");
 
 
 router.post("/register", async function (req, res, next) {
-    req.body.userType = "USER";
-
+    
     bcryptjs.genSalt(10, function (err, salt) {
         if (err) throw err;
         bcryptjs.hash(req.body.password, salt, async function (err, hash) {
