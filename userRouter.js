@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 
 
 router.post("/register", async function (req, res, next) {
+    req.body.userType = "USER";
     
     bcryptjs.genSalt(10, function (err, salt) {
         if (err) throw err;
@@ -67,9 +68,8 @@ router.post("/login",async (req,res) => {
 });
 
 router.get("/info",async (req,res) => {
-    req.json({
-        message: "User Info"
-    })
+    let userData = await User.find();
+    res.json(userData)
 });
 
 
