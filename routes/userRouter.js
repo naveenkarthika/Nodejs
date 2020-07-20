@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { User } = require("./model/userSchema");
+const { User } = require("../model/userSchema");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -68,7 +68,7 @@ router.post("/login",async (req,res) => {
 });
 
 router.get("/info",async (req,res) => {
-    let userData = await User.find();
+    let userData = await User.find().select(['-password']);
     res.json(userData)
 });
 

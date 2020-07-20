@@ -1,11 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const router = require("./userRouter");
+const router = require("./routes/userRouter");
 const config = require("./config");
-
-
+const records = require("./routes/faculty/record");
+const admin = require("./routes/Admin");
 
 //Express Server 
 const app = express();
@@ -14,7 +12,12 @@ const app = express();
 // app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 app.use(express.json());
+
+
+//Routes
 app.use("/api",router);
+app.use("/record",records);
+app.use("/admin",admin);
 
 
 app.get("/",(req,res) => {
