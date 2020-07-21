@@ -1,7 +1,8 @@
 const router = require("express").Router();
+const { authenticate,permission } = require("../../jwt_auth/auth");
 
 
-router.get("/",(req,res) => {
+router.get("/",[authenticate,permission("USER")],(req,res) => {
     res.json({
         message : "Student records"
     })

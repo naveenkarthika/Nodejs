@@ -2,12 +2,12 @@ const router = require("express").Router();
 const { User } = require("../model/userSchema");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { authenticate, permission } = require("../jwt_auth/auth");
 
 
 
 router.post("/register", async function (req, res, next) {
     req.body.userType = "USER";
-    
     bcryptjs.genSalt(10, function (err, salt) {
         if (err) throw err;
         bcryptjs.hash(req.body.password, salt, async function (err, hash) {
@@ -37,7 +37,7 @@ router.post("/register", async function (req, res, next) {
 });
 
 router.post("/login",async (req,res) => {
-    console.log(req.body)
+    // console.log(req.body)
     let user = await User.findOne({ email: req.body.email });
     if(user){
         bcryptjs.compare(req.body.password,user.password, function (err,result){
@@ -67,7 +67,7 @@ router.post("/login",async (req,res) => {
 
 });
 
-router.get("/info",async (req,res) => {
+router.get("/info",[authenticate],async (req,res) => {
     let userData = await User.find().select(['-password']);
     res.json(userData)
 });
